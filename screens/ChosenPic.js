@@ -1,35 +1,21 @@
 import React from "react";
-import { ScrollView, StyleSheet, Text, View, Image, Button } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
+import { connect } from "react-redux";
 
-export default class ChosenPic extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loaded: false
-    };
-  }
+class ChosenPic extends React.Component {
   render() {
-    const { navigate } = this.props.navigation;
     let current = <Text>Choose a pic</Text>;
-    if (this.state.loaded !== false) {
+    if (this.props.loaded !== false) {
       current = (
         <Image
           style={styles.backgroundImage}
           source={{
-            uri: this.props.navigation.state.params.img
+            uri: this.props.pic
           }}
         />
       );
     }
     return <View style={styles.container}>{current}</View>;
-    //return <Button onPress={() => console.log(this.props)} title="BTN"/>
-  }
-  componentDidUpdate() {
-    if (this.state.loaded === false) {
-      this.setState({
-        loaded: true
-      });
-    }
   }
 }
 
@@ -47,3 +33,13 @@ const styles = StyleSheet.create({
     width: null
   }
 });
+function mapStateToProps(state) {
+  return {
+    loaded: state.loaded.loaded,
+    pic: state.loaded.pic
+  };
+}
+export default connect(
+  mapStateToProps,
+  null
+)(ChosenPic);

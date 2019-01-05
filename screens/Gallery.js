@@ -1,4 +1,6 @@
 import React from "react";
+import { connect } from "react-redux";
+import { loaded } from "../store/actions/loading";
 import {
   ScrollView,
   StyleSheet,
@@ -8,7 +10,7 @@ import {
   TouchableHighlight
 } from "react-native";
 
-export default class Gallery extends React.Component {
+class Gallery extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -34,22 +36,26 @@ export default class Gallery extends React.Component {
       return (
         <TouchableHighlight
           key={index}
-          onPress={() => navigate("Pic", { img: big, loaded: true })}
+          onPress={() => this.bigPicture(navigate, big)}
         >
-        <View style={styles.imgContainer}>
-          <Text>By: {name}</Text>
-          <Image
-            key={index}
-            style={styles.img}
-            source={{
-              uri: small
-            }}
-          />
+          <View style={styles.imgContainer}>
+            <Text>By: {name}</Text>
+            <Image
+              key={index}
+              style={styles.img}
+              source={{
+                uri: small
+              }}
+            />
           </View>
         </TouchableHighlight>
       );
     });
   }
+  bigPicture = (nav, photo) => {
+    this.props.loaded(photo);
+    nav("Pic");
+  };
   componentDidMount() {
     return fetch(
       "https://api.unsplash.com/photos/?client_id=ab3411e4ac868c2646c0ed488dfd919ef612b04c264f3374c97fff98ed253dc9"
@@ -57,7 +63,6 @@ export default class Gallery extends React.Component {
       .then(response => response.json())
       .then(data => {
         for (let item of data) {
-          console.log(data)
           this.setState({
             authors: this.state.authors.concat(item.user.name),
             fullImgs: this.state.fullImgs.concat(item.urls.full),
@@ -82,9 +87,9 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center"
   },
   img: {
     width: 300,
@@ -92,3 +97,12 @@ const styles = StyleSheet.create({
     margin: 5
   }
 });
+function mapDispatchToProps(dispatch) {
+  return {
+    loaded: load => dispatch(loaded(load))
+  };
+}
+export default connect(
+  null,
+  mapDispatchToProps
+)(Gallery);

@@ -42,6 +42,6 @@ Chosen.navigationOptions = {
 };
 
 export default createBottomTabNavigator({
-  Chosen,
-  Gallery
+  Gallery,
+  Chosen
 });
